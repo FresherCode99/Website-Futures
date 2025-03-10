@@ -1,23 +1,37 @@
 @extends('layouts.app')
-@section('title' ,'Account Setting')
+@section('title', 'Account Setting')
 @section('mainn')
+    <div class="flex-grow-1 container-p-y container-fluid">
+        @php
+        $user = Auth::user();
+        @endphp
 
-<!--Content tại đây -->
-<h1>Messages with {{ $friend->id }}</h1>
+        <div id="chat-box">
+            @foreach($messages as $message)
+                <div class="message">
+                    <strong>{{ $message->sender->name }}:</strong> {{ $message->message }}
+                </div>
+            @endforeach
+        </div>
+    
+        <form id="sendMessageForm" method="post" action="{{ route('messages.send', ['receiverId' => $receiverId]) }}">
+            @csrf
+            <textarea name="message" id="message" placeholder="Nhập tin nhắn..."></textarea>
+            <button type="submit">Gửi</button>
+        </form>
+    
+        <script>
+            // Đảm bảo receiverId được sử dụng trong JS
+            var receiverId = @json($receiverId);
+    
+            // Kết nối với kênh chat của người nhận
+            Echo.channel('chat.' + receiverId)
+                .listen('MessageSent', (event) => {
+                    // Hiển thị tin nhắn mới
+                    console.log('Tin nhắn mới:', event.message);
+                    // Cập nhật giao diện với tin nhắn mới
+                });
+        </script>
 
-<form action="{{ route('messages.send', $friend->id) }}" method="POST">
-    @csrf
-    <textarea name="message" rows="4" required></textarea>
-    <button type="submit">Send</button>
-</form>
-
-<ul>
-    @foreach ($messages as $message)
-        <li>
-            <strong>{{ $message->sender->fullname }}:</strong> {{ $message->message }}
-            {{-- <strong>{{ $message->sender->fullname }}:</strong> {{ $message->message }} --}}
-
-        </li>
-    @endforeach
-</ul>
+    
 @endsection

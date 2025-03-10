@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Events\MessageSent; // Import the MessageSent event
 use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
@@ -39,7 +40,7 @@ class ChatController extends Controller
         $message->message = $request->message;
         $message->save();
 
-        return response()->json($message);
+        broadcast(new MessageSent($message)); // Broadcast the message to the recipient
+        return response()->json($message); // Return the message as a JSON response
     }
 }
-

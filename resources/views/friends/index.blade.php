@@ -285,7 +285,7 @@
                                                         <a href="javascript:;"
                                                             class="btn btn-primary d-flex align-items-center me-4"><i
                                                                 class="icon-base bx bx-user-check icon-sm me-2"></i>Connected</a>
-                                                        <a href="{{route('messages',$us->username)}}"
+                                                        <a href="{{route('chat.show',$us->username)}}"
                                                             class="btn btn-label-secondary btn-icon"><i
                                                                 class="icon-base bx bx-envelope icon-md"></i></a>
                                                     </div>

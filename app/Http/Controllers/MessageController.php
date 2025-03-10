@@ -28,22 +28,21 @@ class MessageController extends Controller
         })->get();
 
         // Trả về view với thông tin người bạn và tin nhắn
-        return view('chat.show', compact('friend', 'messages' ));
+        return view('messages.index', compact('friend', 'messages' ));
     }
-    public function showChat($receiverId)
+    public function showChat($username)
     {
-        $messages = Message::where(function ($query) use ($receiverId) {
-            $query->where('sender_id', auth()->id())
-                ->where('receiver_id', $receiverId);
-        })
-        ->orWhere(function ($query) use ($receiverId) {
-            $query->where('sender_id', $receiverId)
-                ->where('receiver_id', auth()->id());
-        })
-        ->get();
+        $user = Auth::user();
+        // Tìm người bạn qua username
+        $friend = User::where('username', $username)->firstOrFail();
 
-        // Truyền receiverId vào view
-        return view('messages.index', compact('messages', 'receiverId'));
+        // Lấy các tin nhắn giữa người dùng hiện tại và bạn đó
+        $messages = Message::where(function($query) use ($friend) {
+            $query->where('sender_id', Auth::id())->where('receiver_id', $friend->id)
+                  ->orWhere('sender_id', $friend->id)->where('receiver_id', Auth::id());
+        })->orderBy('created_at', 'asc')->get();
+
+        return view('messages.index', compact('user','friend', 'messages'));
     }
     // Gửi tin nhắn
     public function sendMessage(Request $request,$receiverId)
@@ -59,7 +58,7 @@ class MessageController extends Controller
             'message' => $request->message,
         ]);
 
-        broadcast(new MessageSent($message));
+        broadcast(new MessageSent($message))->toOthers();
         return back();
         // return view('messages.index' ,compact('messages'));
         // return response()->json($message);

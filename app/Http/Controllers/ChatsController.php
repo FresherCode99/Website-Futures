@@ -32,8 +32,24 @@ class ChatsController extends Controller
        return view('messages.index', compact('user','friend', 'messages'));
    }
 
-   // Gửi tin nhắn
-   public function sendMessage(Request $request, $receiverId)
+    // Gửi tin nhắn
+    public function sendMessage(Request $request, $receiverId)
+    {
+        $user = auth()->user();
+        $receiver = User::find($receiverId);
+        
+        $request->validate([
+            'message' => 'required|string|max:1000',
+        ]);
+
+        $message = Message::create([
+            'sender_id' => $user->id,
+            'receiver_id' => $receiver->id,
+            'message' => $request->message,
+        ]);
+
+        broadcast(new MessageSent($message)); // Broadcast the message to the recipient
+
    {
     $user = auth()->user();
     $receiver = User::find($receiverId);

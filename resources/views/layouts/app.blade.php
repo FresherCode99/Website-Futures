@@ -9,7 +9,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-
+        <meta name="user-id" content="{{ auth()->id() }}">
     <title>@yield('title')</title>
 
 
@@ -288,7 +288,12 @@
             }
         }
     </script>
-   
+
+{{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+
+   @vite(['resources/js/app.js'])
+
+
     {{-- <script>
         $('#sendMessageForm').submit(function(e) {
     e.preventDefault();

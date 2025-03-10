@@ -8,10 +8,12 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class MessageSent implements ShouldBroadcast
+class MessageSent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -31,4 +33,16 @@ class MessageSent implements ShouldBroadcast
     {
         return 'MessageSent';  // Tên sự kiện phát
     }
+
+    
+    public function broadcastWith()
+    {
+        Log::info("Đã gửi tin nhắn:", ['message' => $this->message]); // Debug
+
+        return [
+            'message' => $this->message
+        ];
+    }
 }
+
+

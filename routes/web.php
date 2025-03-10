@@ -73,7 +73,7 @@ Route::middleware(['auth'])->group(function () {
         // Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
         
         // Route::get('messages', [ChatsController::class, 'index'])->name('message.index');
-        Route::get('/messages/{receiverId}', [MessageController::class, 'showChat'])->name('chat.show');
+        Route::get('/messages/{username}', [MessageController::class, 'showChat'])->name('chat.show');
         Route::post('/messages/{receiverId}/send', [MessageController::class, 'sendMessage'])->name('messages.send');
         // Route::get('messages/chat/{user}', [ChatsController::class, 'chat'])->name('message.chat');
     });

@@ -1,0 +1,23 @@
+@extends('layouts.app')
+@section('title' ,'Account Setting')
+@section('mainn')
+
+<!--Content tại đây -->
+<h1>Messages with {{ $friend->id }}</h1>
+
+<form action="{{ route('messages.send', $friend->id) }}" method="POST">
+    @csrf
+    <textarea name="message" rows="4" required></textarea>
+    <button type="submit">Send</button>
+</form>
+
+<ul>
+    @foreach ($messages as $message)
+        <li>
+            <strong>{{ $message->sender->fullname }}:</strong> {{ $message->message }}
+            {{-- <strong>{{ $message->sender->fullname }}:</strong> {{ $message->message }} --}}
+
+        </li>
+    @endforeach
+</ul>
+@endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
+use App\Models\Friend;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,30 +23,50 @@ class MessageController extends Controller
         }
 
         // Lấy các tin nhắn giữa người dùng hiện tại và bạn đó
-        $messages = Message::where(function($query) use ($friend) {
+        $messages = Message::where(function ($query) use ($friend) {
             $query->where('sender_id', Auth::id())->where('receiver_id', $friend->id)
-                  ->orWhere('sender_id', $friend->id)->where('receiver_id', Auth::id());
+                ->orWhere('sender_id', $friend->id)->where('receiver_id', Auth::id());
         })->get();
 
         // Trả về view với thông tin người bạn và tin nhắn
-        return view('messages.index', compact('friend', 'messages' ));
+        return view('messages.index', compact('friend', 'messages'));
     }
     public function showChat($username)
-    {
-        $user = Auth::user();
-        // Tìm người bạn qua username
-        $friend = User::where('username', $username)->firstOrFail();
+{
+    $user = Auth::user();
+    $frr = $user->friends;
+    // Tìm người bạn qua username
+    $fri = User::where('username', $username)->firstOrFail();
 
-        // Lấy các tin nhắn giữa người dùng hiện tại và bạn đó
-        $messages = Message::where(function($query) use ($friend) {
-            $query->where('sender_id', Auth::id())->where('receiver_id', $friend->id)
-                  ->orWhere('sender_id', $friend->id)->where('receiver_id', Auth::id());
-        })->orderBy('created_at', 'asc')->get();
+    // Lấy danh sách bạn bè + tin nhắn mới nhất
+    $friends = User::all()->map(function ($friend) {
+        $lastMessage = Message::where(function ($query) use ($friend) {
+            $query->where('sender_id', auth()->id())
+                ->where('receiver_id', $friend->id);
+        })->orWhere(function ($query) use ($friend) {
+            $query->where('sender_id', $friend->id)
+                ->where('receiver_id', auth()->id());
+        })->latest()->first();
+        
+        $friend->lastMessage = $lastMessage;
+        return $friend;
+    });
+    // return $friends;
 
-        return view('messages.index', compact('user','friend', 'messages'));
-    }
+    // Lấy các tin nhắn giữa user hiện tại và bạn đó
+    $messages = Message::where(function ($query) use ($fri) {
+        $query->where('sender_id', Auth::id())
+              ->where('receiver_id', $fri->id);
+    })->orWhere(function ($query) use ($fri) {
+        $query->where('sender_id', $fri->id)
+              ->where('receiver_id', Auth::id());
+    })->orderBy('created_at', 'asc')->get();
+
+    return view('messages.index', compact('user', 'fri', 'frr', 'friends', 'messages'));
+}
+
     // Gửi tin nhắn
-    public function sendMessage(Request $request,$receiverId)
+    public function sendMessage(Request $request, $receiverId)
     {
 
         $request->validate([

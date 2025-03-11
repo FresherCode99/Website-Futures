@@ -9,7 +9,11 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-        <meta name="user-id" content="{{ auth()->id() }}">
+      <meta name="user-id" content="{{ auth()->id() }}"> 
+
+      {{-- {{request()->is("*/" . $frr->username) ? "$frr->avatar" : ""}} --}}
+      <meta name="user-img" content="{{request()->is("*/" . $frr->username) ? "$frr->avatar" : ""}}">     
+       
     <title>@yield('title')</title>
 
 
@@ -292,6 +296,7 @@
 {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
 
    @vite(['resources/js/app.js'])
+   {{-- @vite(['resources/js/bootstrap.js']) --}}
 
 
     {{-- <script>
@@ -313,6 +318,9 @@
     });
 });
     </script> --}}
+    <script>
+        console.log(window.Echo);
+    </script>
 </body>
 
 </html>

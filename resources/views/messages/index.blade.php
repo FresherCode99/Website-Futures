@@ -129,27 +129,35 @@
                             <li class="chat-contact-list-item chat-list-item-0 d-none">
                                 <h6 class="text-body-secondary mb-0">No Chats Found</h6>
                             </li>
-                            {{-- @foreach ($friend as $friend) --}}
+                            {{-- @foreach ($fri as $fri) --}}
 
-
-                            <li class="chat-contact-list-item mb-1 custom-cursor-on-hover">
-                                <a class="d-flex align-items-center chat-link"
-                                    data-id="{{ $friend->id }}"{{ $friend->name }}>
+                            @foreach($frr as $frr)
+                            <li class="chat-contact-list-item mb-1 custom-cursor-on-hover {{request()->is("*/" . $frr->username) ? "active" : ""}}"  >
+                                <a class="d-flex align-items-center chat-link" href="{{route('chat.show',$frr->username)}}"
+                                    data-id="{{ $frr->id }}" {{ $frr->name }}>
                                     <div class="flex-shrink-0 avatar avatar-online">
-                                        <img src="../../assets/img/avatars/13.png" alt="Avatar" class="rounded-circle">
+                                        <img src="{{asset('../../storage/'.$frr->avatar)}}" alt="Avatar" class="rounded-circle">
                                     </div>
                                     <div class="chat-contact-info flex-grow-1 ms-4">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h6 class="chat-contact-name text-truncate m-0 fw-normal">
-                                                {{ $friend->fullname }}</h6>
+                                                {{ $frr->fullname }}</h6>
                                             <small class="chat-contact-list-item-time">5 Minutes</small>
                                         </div>
-                                        <small class="chat-contact-status text-truncate">Refer friends. Get
-                                            rewards.</small>
+
+                                        {{-- @if($friend->lastMessage)
+                                        @if($friend->lastMessage->sender_id === auth()->id())
+                                        <small class="chat-contact-status text-truncate"> You:{{ $fri->lastMessage->message }}</small>
+                                        @else
+                                        <small class="chat-contact-status text-truncate"> {{ $fri->lastMessage->message }}</small>
+                                        @endif
+                                        @else
+                                            Chưa có tin nhắn
+                                        @endif --}}
                                     </div>
                                 </a>
                             </li>
-                            {{-- @endforeach --}}
+                            @endforeach
                         </ul>
 
                         <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
@@ -162,8 +170,8 @@
                 </div>
                 <!-- /Chat contacts -->
 
-                <!-- Chat conversation -->
-                <div class="col app-chat-conversation d-flex align-items-center justify-content-center flex-column"
+                {{-- <!-- Chat conversation -->
+                <div class="col app-chat-conversation d-flex align-items-center justify-content-center flex-column d-none"
                     id="app-chat-conversation">
                     <div class="bg-label-primary p-8 rounded-circle">
                         <i class="icon-base bx bx-message-alt-detail icon-48px"></i>
@@ -172,11 +180,11 @@
                     <button class="btn btn-primary app-chat-conversation-btn" id="app-chat-conversation-btn">Select
                         Contact</button>
                 </div>
-                <!-- /Chat conversation -->
+                <!-- /Chat conversation --> --}}
 
                 <!-- Chat History -->
 
-                <div class="col app-chat-history d-none" id="app-chat-history" data-id="{{ $friend->id }}">
+                <div class="col app-chat-history" id="app-chat-history" data-id="{{ $frr->id }}">
                     <div class="chat-history-wrapper">
                         <div class="chat-history-header border-bottom">
                             <div class="d-flex justify-content-between align-items-center">
@@ -184,13 +192,13 @@
                                     <i class="icon-base bx bx-menu icon-lg cursor-pointer d-lg-none d-block me-4"
                                         data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-contacts"></i>
                                     <div class="flex-shrink-0 avatar avatar-online">
-                                        <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle"
+                                        <img src="{{asset('../../storage/'.$fri->avatar)}}" alt="Avatar" class="rounded-circle"
                                             data-bs-toggle="sidebar" data-overlay=""
                                             data-target="#app-chat-sidebar-right">
                                     </div>
                                     <div class="chat-contact-info flex-grow-1 ms-4">
-                                        <h6 class="m-0 fw-normal">{{ $friend->fullname }}</h6>
-                                        <small class="user-status text-body">NextJS developer</small>
+                                        <h6 class="m-0 fw-normal">{{ $fri->fullname }}</h6>
+                                        <small class="user-status text-body">{{$fri->topic}}</small>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center">
@@ -223,8 +231,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div  id="chat-history-body"  class="chat-history-body ps " data-id="{{ $friend->id }}">
-                            <ul class="list-unstyled chat-history">
+                        <div  id="chat-history-body"  class="chat-history-body ps " data-id="{{ $fri->id }}">
+                            <ul class="list-unstyled chat-history" id="list-unstyled chat-history">
                               
                                 @foreach ($messages as $key =>$message)
                                 @php
@@ -253,15 +261,15 @@
 
                                                 <div class="user-avatar flex-shrink-0 ms-4">
                                                     <div class="avatar avatar-sm">
-                                                        <img src="../../assets/img/avatars/1.png" alt="Avatar"
+                                                        <img src="{{asset('../../storage/'.$frr->avatar)}}" alt="Avatar"
                                                             class="rounded-circle">
                                                     </div>
                                                 </div>
                                                 @else
                                                 <div class="user-avatar flex-shrink-0 ms-4">
                                                     <div class="avatar avatar-sm">
-                                                        {{-- <img src="../../assets/img/avatars/1.png" alt="Avatar"
-                                                            class="rounded-circle"> --}}
+                                                        <img src="{{asset('../../storage/'.$frr->avatar)}}" alt="Avatar"
+                                                            class="rounded-circle">
                                                     </div>
                                                 </div>
                                                 @endif
@@ -272,7 +280,7 @@
                                             <div class="d-flex overflow-hidden">
                                                 <div class="user-avatar flex-shrink-0 me-4">
                                                     <div class="avatar avatar-sm">
-                                                        <img src="../../assets/img/avatars/4.png" alt="Avatar"
+                                                        <img src="{{asset('../../storage/'.$frr->avatar)}}" alt="Avatar"
                                                             class="rounded-circle">
                                                     </div>
                                                 </div>
@@ -295,7 +303,7 @@
                                         <strong>{{ $message->sender->fullname }}:</strong> {{ $message->message }}
                                     </div> --}}
                                 @endforeach
-
+                                    {{-- <li></li> --}}
 
 
                             </ul>
@@ -308,11 +316,11 @@
                         </div>
                         <!-- Chat message form -->
                         <div class="chat-history-footer shadow-xs">
-                            <form  action="{{ route('messages.send', $friend->id) }}" method="POST" id="sendMessageForm" class="form-send-message d-flex justify-content-between align-items-center ">
+                            <form  action="{{ route('messages.send', $fri->id) }}" method="POST" id="sendMessageForm" class="form-send-message d-flex justify-content-between align-items-center ">
                                 @csrf
                                 <input name="message" id="message" class="form-control message-input border-0 me-4 shadow-none"
                                     placeholder="Type your message here..." required>
-                                    <input type="text" value="{{$friend->id}}" hidden id="receiverId">
+                                    <input type="text" value="{{$fri->id}}" hidden id="receiverId">
                                 <div class="message-actions d-flex align-items-center">
                                     <span class="btn btn-text-secondary btn-icon rounded-pill cursor-pointer">
                                         <i class="speech-to-text icon-base bx bx-microphone icon-md text-heading"></i>
@@ -330,7 +338,7 @@
                                 </div>
                             </form>
 
-                            {{-- <form action="{{ route('messages.send', $friend->id) }}" method="POST">
+                            {{-- <form action="{{ route('messages.send', $fri->id) }}" method="POST">
                                 @csrf
                                 <textarea name="message" rows="4" required></textarea>
                                 <button type="submit">Send</button>
@@ -421,7 +429,8 @@
 
     </div>
     <script>
-        Echo.channel('chat.' + receiverId)
+        let userId = document.querySelector('meta[name="user-id"]').content;
+        Echo.channel('chat.' + userId)
             .listen('MessageSent', (event) => {
                 // Cập nhật giao diện với tin nhắn mới
                 console.log('Tin nhắn mới:', event.message);

@@ -13,7 +13,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class MessageSent implements ShouldBroadcastNow
+class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -26,7 +26,7 @@ class MessageSent implements ShouldBroadcastNow
 
     public function broadcastOn()
     {
-        return new Channel('chat.' . $this->message->receiver_id);  // Kênh chat giữa người gửi và người nhận
+        return new PrivateChannel('chat.' . $this->message->receiver_id);  // Kênh chat giữa người gửi và người nhận
     }
 
     public function broadcastAs()

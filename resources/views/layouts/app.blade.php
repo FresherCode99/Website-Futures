@@ -12,7 +12,7 @@
       <meta name="user-id" content="{{ auth()->id() }}"> 
 
       {{-- {{request()->is("*/" . $frr->username) ? "$frr->avatar" : ""}} --}}
-      <meta name="user-img" content="{{request()->is("*/" . $frr->username) ? "$frr->avatar" : ""}}">     
+      <meta name="user-img" content="{{request()->is("*/messages/" . $frr->username) ? "$frr->avatar" : ""}}">     
        
     <title>@yield('title')</title>
 
@@ -293,7 +293,7 @@
         }
     </script>
 
-{{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+
 
    @vite(['resources/js/app.js'])
    {{-- @vite(['resources/js/bootstrap.js']) --}}
